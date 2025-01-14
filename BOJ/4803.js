@@ -1,24 +1,56 @@
 const fs = require('fs');
 const input = fs.readFileSync('./input.txt').toString().split('\n');
 
-let [n, m] = input[0].split(' ').map(Number);
+let line = 0;
+let testCase = 1;
 
-console.log(n,m);
+while(true) {
+    let [n, m] = input[line].split(' ').map(Number);
+    if(n === 0 && m === 0) break;
 
-// let line = 0;
-// while(true) {
-//     let graph = [];
-//     let [n, m] = input[line].split('').map(Number);
-//     for(let i = 1; i <= n; i++) {
-//         graph[i] = [];
-//     }
-//     console.log(graph);
+    graph = [];
+    for(let i = 1; i <= n; i++) {
+        graph[i] = [];
+    }
+
+    for(let i = 1; i <= m; i++) {
+        let [x, y] = input[line + i].split(' ').map(Number);
+        graph[x].push(y);
+        graph[y].push(x);
+    }
+
+    visited = new Array(n + 1).fill(false);
+    let count = 0;
+    for(let i = 1; i <= n; i++) {
+        if(!visited[i]) {
+            if(!isCycle(i, 0)) count++;
+        }
+    }
     
-//     for(let i = line; i < line + m; i++) {
+    if (count > 1) {
+        console.log(`Case ${testCase}: A forest of ${count} trees.`);
+    } else if (count === 1) {
+        console.log(`Case ${testCase}: There is one tree.`);
+    } else {
+        console.log(`Case ${testCase}: No trees.`);
+    }
+    line += m + 1;
+    testCase += 1;
+}
+ 
+function isCycle(x, prev) {
+    visited[x] = true;
 
-//     }
+    for(let y of graph[x]) {
+        if(!visited[y]) {
+            if(isCycle(y, x)) return true;
+        } else if(y !== prev) {
+            return true;
+        }
+    }
 
-//     line += m + 1;
-// }
+    return false;
+}
+
 
 
